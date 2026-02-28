@@ -1,28 +1,35 @@
 pipeline {
     agent any
 
+    environment {
+        SERVER = "ubuntu@172.31.246.219"
+        DEPLOY_PATH = "/var/www/html"
+    }
+
     stages {
-        stage('Pull Code') {
+
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/rdx289/Learn01.git'
+                checkout scm
             }
         }
 
-        stage('Deploy to Webserver') {
+        stage('Deploy to Apache') {
             steps {
-                sshPublisher(publishers: [
-                    sshPublisherDesc(
-                        configName: 'WebServer',
-                        transfers: [
-                            sshTransfer(
-                                sourceFiles: '**/*',
-                                removePrefix: '',
-                                remoteDirectory: '/var/www/html',
-                                execCommand: 'sudo systemctl restart apache2'
-                            )
-                        ]
-                    )
-                ])
+                sshagent(['apache-server-ssh']) {
+                    sh '''
+                    echo "Cleaning old files..."
+                    ssh $SERVER "sudo rm -rf $DEPLOY_PATH/*"
+
+                    echo "Copying new files..."
+                    scp -o StrictHostKeyChecking=no -r * $SERVER:$DEPLOY_PATH/
+
+                    echo "Restarting Apache..."
+                    ssh $SERVER "sudo systemctl restart apache2"
+
+                    echo "Deployment Done"
+                    '''
+                }
             }
         }
     }
