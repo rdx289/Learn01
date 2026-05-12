@@ -1,0 +1,45 @@
+name: Deploy and Provision Local VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  provision-and-deploy:
+    runs-on: self-hosted 
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 1: Automate Nginx Installation
+      - name: Install and Start Nginx
+        run: |
+          if ! command -v nginx &> /dev/null; then
+              echo "Nginx is not installed. Installing now..."
+              sudo apt-get update
+              # DEBIAN_FRONTEND=noninteractive prevents popups during install
+              sudo DEBIAN_FRONTEND=noninteractive apt-get install nginx -y
+          else
+              echo "Nginx is already installed. Skipping installation."
+          fi
+          
+          # Ensure it's running
+          sudo systemctl start nginx
+          sudo systemctl enable nginx
+
+      # Step 2: Configure Directory Permissions
+      - name: Setup Web Directory
+        run: |
+          # Create directory if it doesn't exist and set permissions
+          sudo mkdir -p /var/www/html
+          # Give the runner user permissions to write to this folder
+          sudo chown -R $USER:$USER /var/www/html
+
+      # Step 3: Deploy Code
+      - name: Deploy Application Files
+        run: |
+          echo "Copying code to web directory..."
+          cp index.html /var/www/html/index.html
+          echo "Deployment successful!"
