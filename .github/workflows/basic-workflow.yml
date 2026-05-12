@@ -1,0 +1,21 @@
+name: First Basic Workflow
+
+# Trigger: Runs automatically when code is pushed to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  execute-powershell:
+    runs-on: windows-latest # We need a Windows runner for Get-ComputerInfo
+    
+    steps:
+      # Step 1: Download your code onto the runner
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Execute the PowerShell script
+      - name: Run PowerShell Script
+        shell: pwsh
+        run: ./Get-SysInfo.ps1
