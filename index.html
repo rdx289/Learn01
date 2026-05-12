@@ -1,67 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- This is the change -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        body { max-width: 800px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
-        h1 { text-align: center; color: #333; margin-bottom: 20px; }
-        .form-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        input:focus { outline: none; border-color: #007bff; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        .btn-primary { background: #007bff; color: #fff; }
-        .btn-primary:hover { background: #0056b3; }
-        .btn-success { background: #28a745; color: #fff; }
-        .btn-success:hover { background: #1e7e34; }
-        .btn-danger { background: #dc3545; color: #fff; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-secondary { background: #6c757d; color: #fff; }
-        .btn-secondary:hover { background: #545b62; }
-        .table-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Inter', Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p { color: rgba(255,255,255,0.8); margin-top: 10px; font-size: 1.1rem; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .stat-card .label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .search-bar {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-bar svg { width: 20px; height: 20px; color: #666; }
+        .search-bar input {
+            flex: 1;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+        .form-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
+        }
+        .form-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .input-group { position: relative; }
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn-primary { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            flex: 1;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #666;
+        }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-success { background: #10b981; color: #fff; }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-danger:hover { background: #dc2626; transform: translateY(-2px); }
+        .hidden { display: none !important; }
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .table-header h2 { font-size: 1.2rem; color: #333; }
+        .table-header span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #f8f9fa; font-weight: bold; }
-        tr:hover { background: #f8f9fa; }
-        .actions { display: flex; gap: 5px; }
-        .hidden { display: none; }
-        .empty { text-align: center; padding: 40px; color: #666; }
+        th {
+            background: #f9fafb;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td { padding: 18px 20px; border-bottom: 1px solid #f3f4f6; color: #333; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #f9fafb; }
+        .actions { display: flex; gap: 8px; }
+        .actions .btn { padding: 8px 14px; font-size: 0.85rem; border-radius: 8px; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: #d1d5db;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 { color: #374151; margin-bottom: 10px; }
+        .empty-state p { color: #9ca3af; }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 640px) {
+            .stats { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 12px 10px; }
+            .actions .btn { padding: 6px 10px; font-size: 0.8rem; }
+        }
     </style>
 </head>
 <body>
-    <h1>CRUD Application</h1>
-    <div class="form-card">
-        <form id="crudForm">
-            <input type="hidden" id="userId">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" required placeholder="Enter name">
+    <div class="container">
+        <div class="header">
+            <h1>User Management</h1>
+            <p>Manage your users with ease</p>
+        </div>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number" id="totalCount">0</div>
+                <div class="label">Total Users</div>
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" required placeholder="Enter email">
+            <div class="stat-card">
+                <div class="number" id="todayCount">0</div>
+                <div class="label">Added Today</div>
             </div>
-            <button type="submit" id="submitBtn" class="btn btn-primary">Add Record</button>
-            <button type="button" id="cancelBtn" class="btn btn-secondary hidden" onclick="resetForm()">Cancel</button>
-        </form>
-    </div>
-    <div class="table-card">
-        <table id="dataTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
-        <div id="emptyMsg" class="empty hidden">No records found</div>
+            <div class="stat-card">
+                <div class="number" id="recentCount">0</div>
+                <div class="label">Last 7 Days</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="searchInput" placeholder="Search by name or email...">
+        </div>
+        <div class="form-card">
+            <h2>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                <span id="formTitle">Add New User</span>
+            </h2>
+            <form id="crudForm">
+                <input type="hidden" id="userId">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required placeholder="John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="john@example.com">
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" id="submitBtn" class="btn btn-primary">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        Add User
+                    </button>
+                    <button type="button" id="cancelBtn" class="btn btn-secondary hidden" onclick="resetForm()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="table-card">
+            <div class="table-header">
+                <h2>All Users</h2>
+                <span id="recordCount">0 records</span>
+            </div>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <div id="emptyMsg" class="empty-state hidden">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <h3>No users found</h3>
+                <p>Add your first user using the form above</p>
+            </div>
+        </div>
     </div>
     <script>
         let records = JSON.parse(localStorage.getItem('crudRecords')) || [];
@@ -69,28 +298,55 @@
         function saveStorage() {
             localStorage.setItem('crudRecords', JSON.stringify(records));
         }
+        function updateStats() {
+            const today = new Date().toDateString();
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            document.getElementById('totalCount').textContent = records.length;
+            document.getElementById('todayCount').textContent = records.filter(r => new Date(r.createdAt).toDateString() === today).length;
+            document.getElementById('recentCount').textContent = records.filter(r => new Date(r.createdAt) >= weekAgo).length;
+            document.getElementById('recordCount').textContent = `${records.length} records`;
+        }
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             const emptyMsg = document.getElementById('emptyMsg');
             const table = document.getElementById('dataTable');
-            if (records.length === 0) {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = records.filter(r => 
+                r.name.toLowerCase().includes(search) || r.email.toLowerCase().includes(search)
+            );
+            if (filtered.length === 0) {
                 table.style.display = 'none';
                 emptyMsg.classList.remove('hidden');
-                return;
+            } else {
+                table.style.display = 'table';
+                emptyMsg.classList.add('hidden');
+                tbody.innerHTML = filtered.map(r => `
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div class="user-avatar">${getInitials(r.name)}</div>
+                                <strong>${escapeHtml(r.name)}</strong>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(r.email)}</td>
+                        <td class="actions">
+                            <button class="btn btn-success" onclick="editRecord(${r.id})">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                Edit
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteRecord(${r.id})">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-9V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
             }
-            table.style.display = 'table';
-            emptyMsg.classList.add('hidden');
-            tbody.innerHTML = records.map(r => `
-                <tr>
-                    <td>${r.id}</td>
-                    <td>${escapeHtml(r.name)}</td>
-                    <td>${escapeHtml(r.email)}</td>
-                    <td class="actions">
-                        <button class="btn btn-success" onclick="editRecord(${r.id})">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteRecord(${r.id})">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
+            updateStats();
         }
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -106,16 +362,15 @@
             const email = document.getElementById('email').value.trim();
             if (editingId) {
                 const index = records.findIndex(r => r.id === editingId);
-                records[index] = { id: editingId, name, email };
+                records[index] = { ...records[index], name, email };
                 editingId = null;
-                document.getElementById('submitBtn').textContent = 'Add Record';
-                document.getElementById('cancelBtn').classList.add('hidden');
             } else {
-                records.push({ id: generateId(), name, email });
+                records.push({ id: generateId(), name, email, createdAt: new Date().toISOString() });
             }
             saveStorage();
             renderTable();
             this.reset();
+            resetForm();
         });
         function editRecord(id) {
             const record = records.find(r => r.id === id);
@@ -123,11 +378,13 @@
             document.getElementById('name').value = record.name;
             document.getElementById('email').value = record.email;
             editingId = id;
-            document.getElementById('submitBtn').textContent = 'Update Record';
+            document.getElementById('submitBtn').innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Update User';
             document.getElementById('cancelBtn').classList.remove('hidden');
+            document.getElementById('formTitle').textContent = 'Edit User';
+            document.getElementById('name').focus();
         }
         function deleteRecord(id) {
-            if (confirm('Are you sure you want to delete this record?')) {
+            if (confirm('Are you sure you want to delete this user?')) {
                 records = records.filter(r => r.id !== id);
                 saveStorage();
                 renderTable();
@@ -136,9 +393,11 @@
         function resetForm() {
             document.getElementById('crudForm').reset();
             editingId = null;
-            document.getElementById('submitBtn').textContent = 'Add Record';
+            document.getElementById('submitBtn').innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg> Add User';
             document.getElementById('cancelBtn').classList.add('hidden');
+            document.getElementById('formTitle').textContent = 'Add New User';
         }
+        document.getElementById('searchInput').addEventListener('input', renderTable);
         renderTable();
     </script>
 </body>
